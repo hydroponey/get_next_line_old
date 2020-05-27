@@ -6,13 +6,30 @@
 /*   By: asimoes <asimoes@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/24 15:47:57 by asimoes           #+#    #+#             */
-/*   Updated: 2020/05/24 15:48:37 by asimoes          ###   ########.fr       */
+/*   Updated: 2020/05/26 14:32:46 by asimoes          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-void	*ft_memcpy(void *dst, const void *src, size_t n)
+static char				*ft_strndup(const char *str, unsigned int n)
+{
+	char			*copy;
+	unsigned int	i;
+
+	if (!(copy = (char *)malloc(sizeof(char) * (n + 1))))
+		return (NULL);
+	i = 0;
+	while (i < n)
+	{
+		copy[i] = str[i];
+		i++;
+	}
+	copy[i] = '\0';
+	return (copy);
+}
+
+void					*ft_memcpy(void *dst, const void *src, size_t n)
 {
 	char		*d;
 	const char	*s;
@@ -26,20 +43,37 @@ void	*ft_memcpy(void *dst, const void *src, size_t n)
 	return (dst);
 }
 
-char	*ft_strchr(const char *s, int c)
+char					*ft_strnchr(const char *s, int c, int len)
 {
 	unsigned int	i;
 	char			*p;
 
 	i = 0;
 	p = (char *)s;
-	while (p[i])
+	while (i < len)
 	{
 		if (p[i] == (char)c)
 			return (&p[i]);
 		i++;
 	}
-	if ((char)c == p[i])
-		return (&p[i]);
 	return (NULL);
+}
+
+void					*ft_realloc(void *ptr, size_t size, size_t ptrsize)
+{
+	void	*new;
+
+	if (!ptr)
+	{
+		if (!(new = malloc(size)))
+			return (NULL);
+	}
+	else
+	{
+		if (!(new = malloc(size)))
+			return (NULL);
+		ft_memcpy(new, ptr, ptrsize);
+		free(ptr);
+	}
+	return (new);
 }
