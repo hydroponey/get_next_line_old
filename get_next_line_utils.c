@@ -6,7 +6,7 @@
 /*   By: asimoes <asimoes@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/24 15:47:57 by asimoes           #+#    #+#             */
-/*   Updated: 2020/05/29 10:53:39 by asimoes          ###   ########.fr       */
+/*   Updated: 2020/05/29 12:45:08 by asimoes          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ void		*ft_memcpy(void *dst, const void *src, size_t n)
 
 char		*ft_strnchr(const char *s, int c, int len)
 {
-	unsigned int	i;
-	char			*p;
+	int		i;
+	char	*p;
 
 	i = 0;
 	p = (char *)s;
