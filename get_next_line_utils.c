@@ -6,7 +6,7 @@
 /*   By: asimoes <asimoes@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/24 15:47:57 by asimoes           #+#    #+#             */
-/*   Updated: 2020/05/30 18:01:27 by asimoes          ###   ########.fr       */
+/*   Updated: 2020/05/30 23:52:02 by asimoes          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ int			last_line(char **buf, char **line, int *bs, char *readbuf)
 		free_buffers(readbuf, buf);
 		return (0);
 	}
-	*bs += 1;
 	if (process_buffer(buf, line, bs, '\0') == -1)
 	{
 		free_buffers(readbuf, buf);

@@ -6,7 +6,7 @@
 /*   By: asimoes <asimoes@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/23 02:19:51 by asimoes           #+#    #+#             */
-/*   Updated: 2020/05/29 12:42:43 by asimoes          ###   ########.fr       */
+/*   Updated: 2020/05/31 00:48:16 by asimoes          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 
 # include <unistd.h>
 # include <stdlib.h>
+
+typedef struct	s_buffer {
+	char	*buffer;
+	int		len;
+}				t_buffer;
 
 char	*ft_strndup(const char *str, unsigned int n);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
