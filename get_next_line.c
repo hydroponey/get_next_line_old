@@ -6,7 +6,7 @@
 /*   By: asimoes <asimoes@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/01 16:00:32 by asimoes           #+#    #+#             */
-/*   Updated: 2020/06/01 21:13:00 by asimoes          ###   ########.fr       */
+/*   Updated: 2020/06/01 21:49:34 by asimoes          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ int				get_line(t_fd_data *d, char **line)
 {
 	char			*newbuf;
 	char			*endl;
-	int				i;
 
 	if (d->buf == NULL)
 		return (ERR_BUFFER_NULL);
