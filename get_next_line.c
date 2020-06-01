@@ -5,107 +5,125 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: asimoes <asimoes@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/05/23 02:19:30 by asimoes           #+#    #+#             */
-/*   Updated: 2020/05/31 01:54:19 by asimoes          ###   ########.fr       */
+/*   Created: 2020/06/01 16:00:32 by asimoes           #+#    #+#             */
+/*   Updated: 2020/06/01 18:19:58 by asimoes          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int				process_buffer(char **buffer, char **line, int *bufsize, int c)
+t_fd_data		*get_fd_data(t_fd_data **start, int fd)
 {
-	void			*newbuf;
-	char			*endl;
-	unsigned int	len;
+	t_fd_data	*cur;
 
-	if (*buffer != NULL && (endl = ft_strnchr(*buffer, c, *bufsize)) != NULL)
+	cur = *start;
+	if (cur == NULL)
+		return (NULL);
+	while (cur)
 	{
-		len = endl - (char*)*buffer;
-		if (!(*line = ft_strndup(*buffer, len)))
-		{
-			free(*buffer);
-			return (-1);
-		}
-		if (!(newbuf = malloc(*bufsize - len - 1)))
-			return (-1);
-		*bufsize -= len + 1;
-		ft_memcpy(newbuf, *buffer + len + 1, *bufsize);
-		free(*buffer);
-		*buffer = newbuf;
-		return (1);
+		if (cur->fd == fd)
+			return (cur);
+		cur = cur->next;
 	}
-	return (0);
+	return (NULL);
 }
 
-int				free_buffers(char *readbuf, char **buf)
+t_fd_data		*add_fd_data(t_fd_data **start, int fd)
 {
-	free(readbuf);
-	if (buf != NULL)
-		free(*buf);
-	buf = NULL;
-	return (-1);
+	t_fd_data	*new;
+	t_fd_data	*copy;
+
+	if (!(new = malloc(sizeof(t_fd_data))))
+		return (NULL);
+	new->buf = NULL;
+	new->eof = 0;
+	new->fd = fd;
+	new->next = NULL;
+	new->size = 0;
+	if (*start == NULL)
+	{
+		*start = new;
+	}
+	else
+	{
+		copy = *start;
+		while (copy->next != NULL)
+			copy = copy->next;
+		copy->next = new;
+	}
+	return (new);
 }
 
 #ifdef BUFFER_SIZE
 
-int				read_loop(t_buffer *readbuf, char **line, char **buf, int *bs)
+int				get_line(t_fd_data *d, char **line)
 {
-	int			retval;
-	char		zero;
+	char			*newbuf;
+	char			*endl;
 
-	zero = '\0';
-	if (!(*buf = ft_realloc(*buf, *bs + readbuf->len + 1, *bs)))
-		return (free_buffers(readbuf->buffer, buf));
-	ft_memcpy(*buf + *bs, readbuf->buffer, readbuf->len);
-	ft_memcpy(*buf + *bs + readbuf->len, &zero, 1);
-	*bs += readbuf->len + 1;
-	if ((retval = process_buffer(buf, line, bs, '\n')) == 1)
+	if (d->buf == NULL)
+		return (-2);
+	if ((endl = ft_strnchr(d->buf, '\n', d->size)))
 	{
-		free_buffers(readbuf->buffer, NULL);
+		if (!(*line = ft_strndup(d->buf, (endl - d->buf))))
+			return (-1);
+		if (!(newbuf = malloc(d->size - (endl - d->buf) - 1)))
+			return (-1);
+		d->size -= (endl - d->buf) + 1;
+		ft_memcpy(newbuf, d->buf + (endl - d->buf) + 1, d->size);
+		free(d->buf);
+		d->buf = newbuf;
 		return (1);
 	}
-	else if (retval == -1)
-		return (free_buffers(readbuf->buffer, buf));
-	return (0);
+	else if (d->eof)
+	{
+		if (!(*line = ft_strndup(d->buf, d->size)))
+			return (-1);
+		return (remove_fd_data(d));
+	}
+	return (-2);
 }
 
-int				get_next_line_r(int fd, char **line, char **buf, int *bs)
+int				read_loop(t_fd_data *d, char **line)
 {
-	ssize_t		readlen;
-	int			retval;
-	char		*readbuf;
-	t_buffer	s_rb;
+	char	*readbuf;
+	int		readlen;
+	int		gl_value;
 
-	if ((retval = process_buffer(buf, line, bs, '\n')) == 1)
-		return (1);
-	else if (retval == -1)
-		return (-1);
 	if (!(readbuf = malloc(BUFFER_SIZE)))
-		return (free_buffers(NULL, buf));
-	while ((readlen = read(fd, readbuf, BUFFER_SIZE)) > 0)
+		return (-1);
+	while ((readlen = read(d->fd, readbuf, BUFFER_SIZE)) >= 0)
 	{
-		s_rb.buffer = readbuf;
-		s_rb.len = readlen;
-		return (read_loop(&s_rb, line, buf, bs));
+		d->eof = (readlen == 0) ? 1 : 0;
+		gl_value = get_line(d, line);
+		if (gl_value != -2)
+			return (gl_value);
+		if (!(d->buf = ft_realloc(d->buf, d->size + readlen, d->size)))
+			return (-1);
+		ft_memcpy(d->buf + d->size, readbuf, readlen);
+		d->size += readlen;
 	}
-	if (readlen <= 0)
-	{
-		if (process_buffer(buf, line, bs, '\n') == 1)
-		{
-			free_buffers(readbuf, NULL);
-			return (1);
-		}
-		return (last_line(buf, line, bs, readbuf));
-	}
-	return (free_buffers(readbuf, buf));
+	return (-1);
 }
-
-#endif
 
 int				get_next_line(int fd, char **line)
 {
-	static char		*buffer = NULL;
-	static int		bufsize = 0;
+	static t_fd_data	*fd_data;
+	t_fd_data			*cur;
+	int					gl_value;
+	int					retval;
 
-	return (get_next_line_r(fd, line, &buffer, &bufsize));
+	if (!(cur = get_fd_data(&fd_data, fd)))
+	{
+		if (!(cur = add_fd_data(&fd_data, fd)))
+			return (-1);
+	}
+	gl_value = get_line(cur, line);
+	if (gl_value != -2)
+		return (gl_value);
+	if ((retval = read_loop(cur, line)) == -1)
+		return (-1);
+	return (retval);
 }
+
+#endif

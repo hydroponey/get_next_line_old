@@ -6,7 +6,7 @@
 /*   By: asimoes <asimoes@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/24 15:47:57 by asimoes           #+#    #+#             */
-/*   Updated: 2020/05/30 23:52:02 by asimoes          ###   ########.fr       */
+/*   Updated: 2020/06/01 17:52:42 by asimoes          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,25 +78,11 @@ void		*ft_realloc(void *ptr, size_t size, size_t ptrsize)
 	return (new);
 }
 
-#ifdef BUFFER_SIZE
-
-int			last_line(char **buf, char **line, int *bs, char *readbuf)
+int			remove_fd_data(t_fd_data *fd_data)
 {
-	if (BUFFER_SIZE == 0)
-		return (0);
-	if (*buf == NULL)
-	{
-		*line = (char*)malloc(1);
-		*line[0] = '\0';
-		free_buffers(readbuf, buf);
-		return (0);
-	}
-	if (process_buffer(buf, line, bs, '\0') == -1)
-	{
-		free_buffers(readbuf, buf);
-		return (-1);
-	}
+	free(fd_data->buf);
+	fd_data->fd = -1;
+	fd_data->size = -1;
+	fd_data->eof = -1;
 	return (0);
 }
-
-#endif
