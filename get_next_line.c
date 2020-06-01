@@ -6,7 +6,7 @@
 /*   By: asimoes <asimoes@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/01 16:00:32 by asimoes           #+#    #+#             */
-/*   Updated: 2020/06/01 22:29:48 by asimoes          ###   ########.fr       */
+/*   Updated: 2020/06/01 23:36:29 by asimoes          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ int				free_fd_data(t_fd_data **start)
 		free(cur->buf);
 		free(cur);
 	}
-	free(*start);
 	return (-1);
 }
 
