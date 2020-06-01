@@ -6,7 +6,7 @@
 /*   By: asimoes <asimoes@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/23 02:19:51 by asimoes           #+#    #+#             */
-/*   Updated: 2020/06/01 20:55:10 by asimoes          ###   ########.fr       */
+/*   Updated: 2020/06/01 21:47:27 by asimoes          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@
 # include <unistd.h>
 # include <stdlib.h>
 
-# define	ERR_BUFFER_NULL		-1
-# define	ERR_NO_LINE			-2
-# define 	ERR_MALLOC			-3
-# define	ERR_READ_FAILURE	-4
+# define ERR_BUFFER_NULL -1
+# define ERR_NO_LINE -2
+# define ERR_MALLOC -3
+# define ERR_READ_FAILURE -4
 
 typedef struct	s_fd_data
 {
