@@ -6,7 +6,7 @@
 /*   By: asimoes <asimoes@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/24 15:47:57 by asimoes           #+#    #+#             */
-/*   Updated: 2020/06/01 20:55:34 by asimoes          ###   ########.fr       */
+/*   Updated: 2020/06/01 22:40:22 by asimoes          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,11 +78,27 @@ void		*ft_realloc(void *ptr, size_t size, size_t ptrsize)
 	return (new);
 }
 
-int			remove_fd_data(t_fd_data *fd_data)
+int			remove_fd_data(t_fd_data *fd_data, t_fd_data **start)
 {
+	t_fd_data	*prev;
+	t_fd_data	*cur;
+
+	cur = *start;
+	prev = NULL;
+	while (cur)
+	{
+		if (cur->next == fd_data)
+		{
+			prev = cur;
+			break ;
+		}
+		cur = cur->next;
+	}
 	free(fd_data->buf);
-	fd_data->fd = -1;
-	fd_data->size = -1;
-	fd_data->eof = -1;
+	if (prev != NULL)
+		prev->next = fd_data->next;
+	else
+		*start = fd_data->next;
+	free(fd_data);
 	return (0);
 }

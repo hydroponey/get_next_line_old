@@ -6,12 +6,11 @@
 /*   By: asimoes <asimoes@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/01 16:00:32 by asimoes           #+#    #+#             */
-/*   Updated: 2020/06/01 21:49:34 by asimoes          ###   ########.fr       */
+/*   Updated: 2020/06/01 22:29:48 by asimoes          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 
 int				free_fd_data(t_fd_data **start)
 {
@@ -59,7 +58,7 @@ t_fd_data		*get_fd_data(t_fd_data **start, int fd)
 
 #ifdef BUFFER_SIZE
 
-int				get_line(t_fd_data *d, char **line)
+int				get_line(t_fd_data *d, char **line, t_fd_data **start)
 {
 	char			*newbuf;
 	char			*endl;
@@ -82,12 +81,12 @@ int				get_line(t_fd_data *d, char **line)
 	{
 		if (!(*line = ft_strndup(d->buf, d->size)))
 			return (ERR_MALLOC);
-		return (remove_fd_data(d));
+		return (remove_fd_data(d, start));
 	}
 	return (ERR_NO_LINE);
 }
 
-int				read_loop(t_fd_data *d, char **line)
+int				read_loop(t_fd_data *d, char **line, t_fd_data **start)
 {
 	char	*readbuf;
 	int		readlen;
@@ -105,7 +104,7 @@ int				read_loop(t_fd_data *d, char **line)
 		ft_memcpy(d->buf + d->size, readbuf, readlen);
 		d->size += readlen;
 		d->eof = (readlen == 0) ? 1 : 0;
-		gl_value = get_line(d, line);
+		gl_value = get_line(d, line, start);
 		if (gl_value != ERR_NO_LINE && gl_value != ERR_BUFFER_NULL)
 		{
 			free(readbuf);
@@ -125,12 +124,12 @@ int				get_next_line(int fd, char **line)
 
 	if (!(cur = get_fd_data(&fd_data, fd)))
 		return (free_fd_data(&fd_data));
-	gl_value = get_line(cur, line);
+	gl_value = get_line(cur, line, &fd_data);
 	if (gl_value == ERR_MALLOC)
 		return (free_fd_data(&fd_data));
 	else if (gl_value != ERR_NO_LINE && gl_value != ERR_BUFFER_NULL)
 		return (gl_value);
-	retval = read_loop(cur, line);
+	retval = read_loop(cur, line, &fd_data);
 	if (retval == ERR_READ_FAILURE || retval == ERR_MALLOC)
 		return (free_fd_data(&fd_data));
 	return (retval);
