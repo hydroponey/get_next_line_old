@@ -6,7 +6,7 @@
 /*   By: asimoes <asimoes@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/01 16:00:32 by asimoes           #+#    #+#             */
-/*   Updated: 2020/06/01 23:36:29 by asimoes          ###   ########.fr       */
+/*   Updated: 2020/06/02 07:44:31 by asimoes          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,8 @@ int				get_next_line(int fd, char **line)
 	int					gl_value;
 	int					retval;
 
+	if (BUFFER_SIZE == 0)
+		return (-1);
 	if (!(cur = get_fd_data(&fd_data, fd)))
 		return (free_fd_data(&fd_data));
 	gl_value = get_line(cur, line, &fd_data);
